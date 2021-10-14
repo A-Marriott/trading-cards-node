@@ -75,27 +75,56 @@ describe("trading cards", () => {
         let game;
         beforeEach(() => {
             game = new Game();
+            game.turnStart();
         });
 
         it("player is not able to play a card", () => {
-            game.turnStart();
             game.player1.cardsInHand = [3,4,6]
             game.playerTurn();
             expect(game.activePlayer).toBe(game.player2)
         });
 
         it("player is able to play a card", () => {
-            game.turnStart();
             game.player1.cardsInHand = [0,4,6]
             game.playerTurn();
             expect(game.activePlayer).toBe(game.player1)
         });
 
-        it("player ", () => {
-            game.turnStart();
-            game.player1.cardsInHand = [0,4,6]
-            game.playerTurn();
-            expect(game.activePlayer).toBe(game.player1)
+        it("player can't play the card", () => {
+            game.player1.cardsInHand = [3,4,6]
+            const numberOfCards = game.player1.cardsInHand.length
+            game.playCard(0);
+            expect(game.player1.cardsInHand.length).toBe(numberOfCards)
         });
+
+        describe("successfully played a card", () => {
+            it("player2 health is reduced", () => {
+                game.player1.cardsInHand = [1,4,6]
+                const healthBefore = game.player2.health;
+                const cardValue = game.player1.cardsInHand[0]
+                game.playCard(0);
+                expect(game.player2.health).toBe(healthBefore - cardValue)
+            });
+
+            it("player1 activeMana is reduced", () => {
+                game.player1.cardsInHand = [1,4,6]
+                const activeManaBefore = game.player1.activeMana;
+                const cardValue = game.player1.cardsInHand[0]
+                game.playCard(0);
+                expect(game.player1.activeMana).toBe(activeManaBefore - cardValue)
+            });
+
+            it("chosen card is removed from cardInHand", () => {
+                game.player1.cardsInHand = [1,4,6]
+                game.playCard(0);
+                expect(game.player1.cardsInHand).toMatchObject([4,6])
+            });
+
+            it("other played died", () => {
+                game.player1.cardsInHand = [1,4,6]
+                game.playCard(0);
+                expect(game.player1.cardsInHand).toMatchObject([4,6])
+            });
+        })
     });
 });
