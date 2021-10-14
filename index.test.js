@@ -32,6 +32,10 @@ describe("trading cards", () => {
             expect(game.player1.cardsInHand.length).toBe(3)
             expect(game.player2.cardsInHand.length).toBe(3)
         });
+
+        it("activePlayer is player1", () => {
+            expect(game.activePlayer).toBe(game.player1)
+        });        
     });
 
     describe("on game start", () => {
@@ -55,10 +59,43 @@ describe("trading cards", () => {
             expect(game.player1.cardsInHand.length).toBe(4)
         });
 
+        it("the active player's cards are sorted", () => {
+            game.turnStart();
+            expect(game.player1.cardsInHand).toBe(game.player1.cardsInHand.sort())
+        });
+
         it("the active player's deck size is reduced by 1", () => {
             const expectedDeckSize = game.player1.cards.length - 1
             game.turnStart();
             expect(game.player1.cards.length).toBe(expectedDeckSize)
+        });
+    });
+
+    describe("on main part of turn", () => {
+        let game;
+        beforeEach(() => {
+            game = new Game();
+        });
+
+        it("player is not able to play a card", () => {
+            game.turnStart();
+            game.player1.cardsInHand = [3,4,6]
+            game.playerTurn();
+            expect(game.activePlayer).toBe(game.player2)
+        });
+
+        it("player is able to play a card", () => {
+            game.turnStart();
+            game.player1.cardsInHand = [0,4,6]
+            game.playerTurn();
+            expect(game.activePlayer).toBe(game.player1)
+        });
+
+        it("player ", () => {
+            game.turnStart();
+            game.player1.cardsInHand = [0,4,6]
+            game.playerTurn();
+            expect(game.activePlayer).toBe(game.player1)
         });
     });
 });
