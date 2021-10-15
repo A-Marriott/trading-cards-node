@@ -9,43 +9,45 @@ class Game {
     this.player2 = {
       health: 30, manaSlot: 0, activeMana: 0, cards: player2Cards, cardsInHand: player2Cards.splice(0, 3),
     };
-    this.activePlayer = this.player1
-  }
+    this.players = {active: this.player1, inactive: this.player2};
+    this.winner = null;
+  };
 
   turnStart() {
-    this.player1.manaSlot += 1
-    this.player1.activeMana = this.player1.manaSlot
-    this.player1.cardsInHand = [...this.player1.cardsInHand, this.player1.cards.splice(0, 1)].sort()
-  }
+    this.players.active.manaSlot += 1;
+    this.players.active.activeMana = this.players.active.manaSlot;
+    this.players.active.cardsInHand = [...this.players.active.cardsInHand, this.players.active.cards.splice(0, 1)].sort();
+    this.playPossible();
+  };
   
-  // game.player1.cardsInHand = [3,4,6]
-  playerTurn() {
-    // check is player able to do turn
-    if (this.player1.cardsInHand[0] > this.player1.activeMana) {
-      this.activePlayer = this.player2
-    } else {
-      
-    }
-    // pick the card from hand
+  playPossible() {
+    if (this.players.active.cardsInHand.length === 0 || this.players.active.cardsInHand[0] > this.players.active.activeMana) {
+      this.switchPlayer();
+    } 
+  };
 
+  playCard(indexOfCard) {
+    if (this.players.active.cardsInHand[indexOfCard] <= this.players.active.activeMana) {
+      this.players.inactive.health -= this.players.active.cardsInHand[indexOfCard];
+      this.players.active.activeMana -= this.players.active.cardsInHand[indexOfCard];
+      this.players.active.cardsInHand.splice(indexOfCard, 1);
+      this.checkPlayerDead();
+      this.playPossible();
+    }
   }
 
-  // indexOfCard = 0 => 3
-  playCard(indexOfCard) {
-    // check do you have enought activeMana
-    console.log(this.player1.cardsInHand[indexOfCard])
-    console.log(this.player1.activeMana)
-    if (this.player1.cardsInHand[indexOfCard] <= this.player1.activeMana) {
-      // reduce second playes health
-      this.player2.health -= this.player1.cardsInHand[indexOfCard]
-      // reduce player1 activeMana
-      this.player1.activeMana -= this.player1.cardsInHand[indexOfCard]      
-      // take chosen card from cardsInHand
-      this.player1.cardsInHand.splice(indexOfCard, 1)
-      // check is other player dead
-      
+  checkPlayerDead() {
+    if (this.players.inactive.health <= 0) {
+      this.winner = this.players.active
     }
+  };
+
+  switchPlayer() {
+    this.players = {active: this.players.inactive, inactive: this.players.active}
+    this.turnStart();
   }
 }
 
 module.exports = Game;
+
+// move constructor to init function

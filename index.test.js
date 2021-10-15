@@ -34,7 +34,7 @@ describe("trading cards", () => {
         });
 
         it("activePlayer is player1", () => {
-            expect(game.activePlayer).toBe(game.player1)
+            expect(game.players.active).toBe(game.player1)
         });        
     });
 
@@ -42,32 +42,28 @@ describe("trading cards", () => {
         let game;
         beforeEach(() => {
             game = new Game();
+            game.player1.cardsInHand = [0,4,6]
+            game.turnStart();
         });
 
         it("the active player's mana slot has increased by 1", () => {
-            game.turnStart();
             expect(game.player1.manaSlot).toBe(1)
         });
 
         it("the active player's active mana is refilled", () => {
-            game.turnStart();
             expect(game.player1.activeMana).toBe(1)
         });
 
         it("the active player's receives 1 more card", () => {
-            game.turnStart();
             expect(game.player1.cardsInHand.length).toBe(4)
         });
 
         it("the active player's cards are sorted", () => {
-            game.turnStart();
             expect(game.player1.cardsInHand).toBe(game.player1.cardsInHand.sort())
         });
 
         it("the active player's deck size is reduced by 1", () => {
-            const expectedDeckSize = game.player1.cards.length - 1
-            game.turnStart();
-            expect(game.player1.cards.length).toBe(expectedDeckSize)
+            expect(game.player1.cards.length).toBe(16)
         });
     });
 
@@ -75,55 +71,72 @@ describe("trading cards", () => {
         let game;
         beforeEach(() => {
             game = new Game();
-            game.turnStart();
+            game.player1.manaSlot = 1
+            game.player1.activeMana = 1
         });
 
-        it("player is not able to play a card", () => {
+        it("switches player if you don't have sufficient mana to play any cards", () => {
             game.player1.cardsInHand = [3,4,6]
-            game.playerTurn();
-            expect(game.activePlayer).toBe(game.player2)
+            game.player2.cardsInHand = [0,4,6]
+            game.playPossible();
+            expect(game.players.active).toBe(game.player2)
         });
 
-        it("player is able to play a card", () => {
+        it("switches player if you have no cards left in hand", () => {
+            game.player1.cardsInHand = []
+            game.player2.cardsInHand = [0]
+            game.playPossible();
+            expect(game.players.active).toBe(game.player2)
+        })
+
+        it("doesn't switch player if cards can be played", () => {
             game.player1.cardsInHand = [0,4,6]
-            game.playerTurn();
-            expect(game.activePlayer).toBe(game.player1)
+            game.playPossible();
+            expect(game.players.active).toBe(game.player1)
         });
 
-        it("player can't play the card", () => {
-            game.player1.cardsInHand = [3,4,6]
+        it("doesn't play a card if the player tries to play a card without sufficient mana", () => {
+            game.player1.cardsInHand = [0,3,4,6]
             const numberOfCards = game.player1.cardsInHand.length
-            game.playCard(0);
+            game.playCard(1);
             expect(game.player1.cardsInHand.length).toBe(numberOfCards)
         });
 
+        it("if a player decides to skip their turn, the active player switches", () => {
+            game.player1.cardsInHand = [0]
+            game.player2.cardsInHand = [0]
+            game.switchPlayer();
+            expect(game.players.active).toBe(game.player2)
+        })
+
         describe("successfully played a card", () => {
             it("player2 health is reduced", () => {
-                game.player1.cardsInHand = [1,4,6]
+                game.player1.cardsInHand = [0,1,4,6]
                 const healthBefore = game.player2.health;
-                const cardValue = game.player1.cardsInHand[0]
-                game.playCard(0);
+                const cardValue = game.player1.cardsInHand[1]
+                game.playCard(1);
                 expect(game.player2.health).toBe(healthBefore - cardValue)
             });
 
             it("player1 activeMana is reduced", () => {
-                game.player1.cardsInHand = [1,4,6]
+                game.player1.cardsInHand = [0,1,4,6]
                 const activeManaBefore = game.player1.activeMana;
-                const cardValue = game.player1.cardsInHand[0]
-                game.playCard(0);
+                const cardValue = game.player1.cardsInHand[1]
+                game.playCard(1);
                 expect(game.player1.activeMana).toBe(activeManaBefore - cardValue)
             });
 
             it("chosen card is removed from cardInHand", () => {
-                game.player1.cardsInHand = [1,4,6]
-                game.playCard(0);
-                expect(game.player1.cardsInHand).toMatchObject([4,6])
+                game.player1.cardsInHand = [0,1,4,6]
+                game.playCard(1);
+                expect(game.player1.cardsInHand).toMatchObject([0,4,6])
             });
 
             it("other played died", () => {
                 game.player1.cardsInHand = [1,4,6]
+                game.player2.health = 1
                 game.playCard(0);
-                expect(game.player1.cardsInHand).toMatchObject([4,6])
+                expect(game.winner).toBe(game.player1)
             });
         })
     });
