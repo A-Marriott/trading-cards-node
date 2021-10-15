@@ -4,10 +4,10 @@ class Game {
     const player1Cards = [...cards].sort(() => Math.random() - 0.5)
     const player2Cards = [...cards].sort(() => Math.random() - 0.5)
     this.player1 = {
-      health: 30, manaSlot: 0, activeMana: 0, cards: player1Cards, cardsInHand: player1Cards.splice(0, 3),
+      displayedName: "player1", health: 30, manaSlot: 0, activeMana: 0, cards: player1Cards, cardsInHand: player1Cards.splice(0, 3),
     };
     this.player2 = {
-      health: 30, manaSlot: 0, activeMana: 0, cards: player2Cards, cardsInHand: player2Cards.splice(0, 3),
+      displayedName: "player2", health: 30, manaSlot: 0, activeMana: 0, cards: player2Cards, cardsInHand: player2Cards.splice(0, 3),
     };
     this.players = {active: this.player1, inactive: this.player2};
     this.winner = null;

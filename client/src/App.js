@@ -1,26 +1,28 @@
 import './App.css';
 import { useState, useEffect } from 'react';
 
+import startGame from './Game';
+
 function App() {
   const [game, setGame] = useState({});
 
   useEffect(() => {
-    startGame();
+    async function fetchData() {
+      const fetchedGame = await startGame()
+      setGame(fetchedGame)
+    }
+    fetchData();
   }, []);
 
-  const startGame = () =>
-  fetch("http://localhost:3000/", {
-    headers: {
-      "Content-Type": "application/json",
-      Accepts: "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => setGame(data))
-  
   return (
     <div className="App">
-      <h1>{game.player1?.health}</h1>
+      <div className="active-player-info">
+        <h1>Active player: {game.players?.active.displayedName}</h1>
+        <h3>Health: {game.players?.active.health}</h3>
+        <h3>Mana slot: {game.players?.active.manaSlot}</h3>
+        <h3>Active mana: {game.players?.active.manaSlot}</h3>
+
+      </div>
     </div>
   )
 }
