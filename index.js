@@ -50,4 +50,21 @@ class Game {
 
 module.exports = Game;
 
-// move constructor to init function
+const express = require('express')
+const app = express()
+const port = 3000
+const game = new Game();
+
+app.get('/', (req, res) => {
+  res.json(game)
+})
+
+// app.get('/playcard', (req, res) => {
+//   playcard(1)
+//   res.json(game)
+// })
+
+
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`)
+})
