@@ -16,7 +16,7 @@ class Game {
   turnStart() {
     this.players.active.manaSlot += 1;
     this.players.active.activeMana = this.players.active.manaSlot;
-    this.players.active.cardsInHand = [...this.players.active.cardsInHand, this.players.active.cards.splice(0, 1)].sort();
+    this.players.active.cardsInHand = [...this.players.active.cardsInHand, this.players.active.cards.splice(0, 1)[0]].sort();
     this.playPossible();
   };
   
@@ -59,14 +59,14 @@ const game = new Game();
 app.use(cors());
 
 app.get('/', (req, res) => {
-  game.turnStart();
+  // game.turnStart();
   res.json(game)
 })
 
-// app.get('/playcard', (req, res) => {
-//   playcard(1)
-//   res.json(game)
-// })
+app.get('/playturn', (req, res) => {
+  game.turnStart();
+  res.json(game)
+})
 
 
 app.listen(port, () => {

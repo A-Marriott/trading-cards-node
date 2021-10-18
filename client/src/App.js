@@ -13,6 +13,11 @@ function App() {
     fetchData();
   }, []);
 
+  const handleClick = async () => {
+    const fetchedGame = await playTurn()
+    setGame(fetchedGame)
+  }
+
   return (
     <div className="App">
       <div className="active-player-info">
@@ -22,6 +27,11 @@ function App() {
         <h3>Active mana: {game.players?.active.activeMana}</h3>
         <h3>Cards in hand: {game.players?.active.cardsInHand.map((card) => `${card} `)}</h3>
       </div>
+      <button
+        onClick={() => handleClick()}
+      >
+        Start turn
+      </button>
     </div>
   )
 }

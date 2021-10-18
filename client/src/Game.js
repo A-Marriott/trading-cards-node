@@ -7,7 +7,7 @@ export const startGame = async () => {
 };
 
 export const playTurn = async () => {
-    const response = (await axios.get("http://localhost:3000/playTurn")).data
+    const response = (await axios.get("http://localhost:3000/playturn")).data
 
     return response;
 }
