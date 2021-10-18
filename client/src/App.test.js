@@ -1,16 +1,14 @@
-import { render, screen } from '@testing-library/react';
 import App from './App';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event'
 import startGame from './Game';
-jest.mock("./Game", () => ({player1: {displayedName: "player1"}, health: 30}))
-// WRONG OBJECT!!!!!!!! line 4
+
+jest.mock("./Game");
+
 describe("it displays players information", () => {
-  // beforeEach(() => {
-  //   startGame.mockReturnValue(() => {
-  //     const aaa = {player1: {displayedName: "player1"}, health: 30}
-  //     console.log(aaa)
-  //     return aaa
-  //   })
-  // })
+  beforeEach(() => {
+    startGame.mockImplementation(() => ({players: { active: {displayedName: "player1", health: 30, manaSlot: 0, activeMana: 0, cardsInHand: [1,2,3]}}}))
+  })
 
   it("it displays active player title", async () => {
     const { findByText } = render(<App />);
@@ -37,9 +35,16 @@ describe("it displays players information", () => {
   });
 
   it("it displays active player cardsInHand", async () => {
-    
     const { findByText } = render(<App />);
-    const element = await findByText(/Cards in hand: 3, 2, 8/i);
+    const element = await findByText(/Cards in hand: 1 2 3/i);
     expect(element).toBeInTheDocument();
   });
+
+  it("it should change active player when button is clicked", async () => {
+    const { findByText } = render(<App />);
+    userEvent.click(screen.getByText('Start turn'))
+    const element = await findByText(/Active player: player2/i);
+    expect(element).toBeInTheDocument();
+  });
+
 });

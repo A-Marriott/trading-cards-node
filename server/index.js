@@ -59,6 +59,7 @@ const game = new Game();
 app.use(cors());
 
 app.get('/', (req, res) => {
+  game.turnStart();
   res.json(game)
 })
 
