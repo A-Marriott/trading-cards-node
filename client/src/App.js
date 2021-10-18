@@ -1,7 +1,6 @@
 import './App.css';
 import { useState, useEffect } from 'react';
-
-import startGame from './Game';
+import { startGame, playTurn } from './Game';
 
 function App() {
   const [game, setGame] = useState({});
@@ -9,7 +8,6 @@ function App() {
   useEffect(() => {
     async function fetchData() {
       const fetchedGame = await startGame()
-      console.log("FECHE", fetchedGame)
       setGame(fetchedGame)
     }
     fetchData();
