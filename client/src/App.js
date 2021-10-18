@@ -18,6 +18,8 @@ function App() {
     setGame(fetchedGame)
   }
 
+  console.log(game.players?.active.cardsInHand)
+
   return (
     <div className="App">
       <div className="active-player-info">
@@ -26,8 +28,9 @@ function App() {
         <h3>Mana slot: {game.players?.active.manaSlot}</h3>
         <h3>Active mana: {game.players?.active.activeMana}</h3>
         <h3>Cards in hand:</h3>
-        {game.players?.active.cardsInHand.map(card => {
-            return <button title="card">{card}</button>
+        {game.players?.active.cardsInHand.map((card, index) => {
+            // return <button key={index} title="card">{card}</button>
+            return <button key={index} data-testid={`test${index}`}>{card}</button>
         })}
       </div>
       <button

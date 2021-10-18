@@ -1,5 +1,5 @@
 import App from './App';
-import { render, screen, getByTitle } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import { startGame, playTurn } from './Game';
 
@@ -47,26 +47,24 @@ describe("Trading card game", () => {
     beforeEach(() => {
       playTurn.mockImplementation(() => ({players: { active: {displayedName: "player1", health: 30, manaSlot: 1, activeMana: 1, cardsInHand: [0,1,2,3]}}}))
     })
-    // is button there
-    it("it displays button", async () => {
-      const { getByText } = render(<App />);
-      const button = await getByText("Start turn");
+    it("there is a start turn button", async () => {
+      const { findByText } = render(<App />);
+      const button = await findByText("Start turn");
       expect(button).toBeTruthy()
     });
-    // Player 1 increase mana slots
-    it("it displays active player manaSlot", async () => {
+    it("the active players mana slot increases by 1", async () => {
       const {findByText} = render(<App/>);
       userEvent.click(screen.getByText('Start turn'))
       const element = await findByText(/Mana slot: 1/i);
       expect(element).toBeInTheDocument();
     });
-    // Player 1 increase active mana
-    it("it displays active player activeMana", async () => {
+    it("the active players active mana increases by 1", async () => {
       const {findByText} = render(<App/>);
       userEvent.click(screen.getByText('Start turn'))
       const element = await findByText(/Active mana: 1/i);
       expect(element).toBeInTheDocument();
     });
+
     // Player 1 has 1 more card in hand
     // it("it displays active players increased number of cards", async () => {
     //   const {findByText} = render(<App/>);
@@ -75,10 +73,18 @@ describe("Trading card game", () => {
     //   expect(element).toBeInTheDocument();
     // });
     
-    it("it displays game card as button", async () => {
-      const { findByText } = render(<App />);
-      const button = screen.getByTitle('card');
-      expect(button).toBeTruthy()
+    it.only("displays game card as button", async () => {
+      // const { findByText } = render(<App />);
+      // render(<App />);
+      // const button = screen.getByRole('button')
+      // expect(button).toBeTruthy()
+      act(() => render(<App />));
+      const button = screen.getByTestId('test0');
+      expect(false).toBeTruthy();
+
+      // const {findByText} = render(<App/>);
+      // const element = await findByText(/5/i);
+      // expect(element).toBeInTheDocument();
     });
 
 
