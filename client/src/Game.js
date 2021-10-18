@@ -12,3 +12,8 @@ export const playTurn = async () => {
     return response;
 }
 
+export const playCard = async (cardIndex) => {
+    const response = (await axios.get(`http://localhost:3000/playcard/${cardIndex}`)).data
+
+    return response;
+}
