@@ -25,7 +25,10 @@ function App() {
         <h3>Health: {game.players?.active.health}</h3>
         <h3>Mana slot: {game.players?.active.manaSlot}</h3>
         <h3>Active mana: {game.players?.active.activeMana}</h3>
-        <h3>Cards in hand: {game.players?.active.cardsInHand.map((card) => `${card} `)}</h3>
+        <h3>Cards in hand:</h3>
+        {game.players?.active.cardsInHand.map(card => {
+            return <button title="card">{card}</button>
+        })}
       </div>
       <button
         onClick={() => handleClick()}
