@@ -1,4 +1,4 @@
-const Game = require("./index")
+const Game = require("../index")
 
 describe("trading cards", () => {
     describe("initialise a game with two players", () => {

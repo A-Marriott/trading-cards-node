@@ -29,7 +29,7 @@ describe('Api testing', () => {
             done();
         })
     });
-    it('Change player', (done) => {
+    it('Restart game', (done) => {
         request(app)
         .get('/restartgame')
         .expect(200)
