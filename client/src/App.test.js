@@ -1,7 +1,7 @@
 import App from "./App";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { startGame, playCard, switchPlayer } from "./Game";
+import { startGame, playCard, switchPlayer, restartGame } from "./Game";
 
 jest.mock("./Game");
 
@@ -171,6 +171,17 @@ describe("Trading card game", () => {
           displayedName: "player1",
         },
       }));
+      restartGame.mockImplementation(() => ({
+        players: {
+          active: {
+            displayedName: "player1",
+            health: 30,
+            manaSlot: 0,
+            activeMana: 0,
+            cardsInHand: [1, 2, 3],
+          },
+        },
+      }));
     })
     it("check does player win", async () => {
       const { findByText } = render(<App />);
@@ -209,10 +220,10 @@ describe("Trading card game", () => {
         },
       }));
       render(<App />);
-      const restartButton = await screen.findByText("Restart game");
+      const restartButton = await screen.findByText(/Restart game/i);
       userEvent.click(restartButton);
-      // const element = await findByText(/Active player: player1/i);
-      // expect(element).toBeInTheDocument();
+      const element = await screen.findByText(/Active player: player1/i);
+      expect(element).toBeInTheDocument();
     });
   })
 
