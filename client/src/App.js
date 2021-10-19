@@ -1,6 +1,6 @@
 import "./App.css";
 import { useState, useEffect } from "react";
-import { startGame, playTurn, playCard } from "./Game";
+import { startGame, playCard, switchPlayer, restartGame } from "./Game";
 
 function App() {
   const [game, setGame] = useState({});
@@ -13,15 +13,29 @@ function App() {
     fetchData();
   }, []);
 
-  const handleStartGame = async () => {
-    const fetchedGame = await playTurn();
-    setGame(fetchedGame);
-  };
-
   const handlePlayCard = async (cardIndex) => {
     const fetchedGame = await playCard(cardIndex);
     setGame(fetchedGame);
   };
+
+  const handleChangePlayer = async () => {
+    const fetchedGame = await switchPlayer();
+    setGame(fetchedGame);
+  };
+
+  const handleRestartGame = async () => {
+    const fetchedGame = await restartGame();
+    setGame(fetchedGame);
+  }
+
+  if (game.winner) {
+    return (
+      <>
+        <div>The winner is: {game.winner?.displayedName}</div>
+        <button onClick={() => {handleRestartGame()}}>Restart game</button>
+      </>
+    )
+  }
 
   return (
     <div className="App">
@@ -48,7 +62,7 @@ function App() {
             })}
           </>
         )}
-        <button onClick={() => handleStartGame()}>Start turn</button>
+        <button onClick={() => handleChangePlayer()}>Change player</button>
         {game.players?.inactive && (
           <>
             <h1>Inactive player: {game.players.inactive.displayedName}</h1>
@@ -57,7 +71,7 @@ function App() {
         )}
       </div>
     </div>
-  );
-}
+  )
+};
 
 export default App;

@@ -1,7 +1,7 @@
 import App from "./App";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { startGame, playTurn, playCard } from "./Game";
+import { startGame, playCard, switchPlayer } from "./Game";
 
 jest.mock("./Game");
 
@@ -54,7 +54,7 @@ describe("Trading card game", () => {
 
   describe("First player plays first turn", () => {
     beforeEach(() => {
-      playTurn.mockImplementation(() => ({
+      startGame.mockImplementation(() => ({
         players: {
           active: {
             displayedName: "player1",
@@ -66,35 +66,15 @@ describe("Trading card game", () => {
         },
       }));
     });
-    it("there is a start turn button", async () => {
-      const { findByText } = render(<App />);
-      const button = await findByText("Start turn");
-      expect(button).toBeVisible();
-    });
     it("the active players mana slot increases by 1", async () => {
       const { findByText } = render(<App />);
-      userEvent.click(screen.getByText("Start turn"));
       const element = await findByText(/Mana slot: 1/i);
       expect(element).toBeInTheDocument();
     });
     it("the active players active mana increases by 1", async () => {
       const { findByText } = render(<App />);
-      userEvent.click(screen.getByText("Start turn"));
       const element = await findByText(/Active mana: 1/i);
       expect(element).toBeInTheDocument();
-    });
-
-    // it("it displays active players increased number of cards", async () => {
-    //   const {findByText} = render(<App/>);
-    //   userEvent.click(screen.getByText('Start turn'))
-    //   const element = await findByText(/Cards in hand: 0 1 2 3/i);
-    //   expect(element).toBeInTheDocument();
-    // });
-
-    it("displays game card as button", async () => {
-      render(<App />);
-      const button = await screen.findByTestId("test0");
-      expect(button).toBeVisible();
     });
   });
 
@@ -115,11 +95,10 @@ describe("Trading card game", () => {
             manaSlot: 1,
             activeMana: 1,
             cardsInHand: [0, 1, 2, 3],
-          }
+          },
         },
       }));
     });
-
     it("the active players active mana decreases by 1", async () => {
       render(<App />);
       const button = await screen.findByTestId("test1");
@@ -127,7 +106,6 @@ describe("Trading card game", () => {
       const element = await screen.findByText(/Active mana: 0/i);
       expect(element).toBeInTheDocument();
     });
-
     it("the inactive players health decreases by 1", async () => {
       render(<App />);
       const button = await screen.findByTestId("test1");
@@ -136,11 +114,120 @@ describe("Trading card game", () => {
       expect(element).toBeInTheDocument();
     });
   });
+  describe("switch player button functionality", () => {
+    beforeEach(() => {
+      switchPlayer.mockImplementation(() => ({
+        players: {
+          active: {
+            displayedName: "player1",
+            health: 30,
+            manaSlot: 1,
+            activeMana: 0,
+            cardsInHand: [0, 2, 3],
+          },
+          inactive: {
+            displayedName: "player2",
+            health: 29,
+            manaSlot: 1,
+            activeMana: 1,
+            cardsInHand: [0, 1, 2, 3],
+          },
+        },
+      }));
+    });
+    it("displays switch active player as button", async () => {
+      const { findByText } = render(<App />);
+      const button = await findByText("Change player");
+      expect(button).toBeVisible();
+    });
+    it("change active player", async () => {
+      const { findByText } = render(<App />);
+      userEvent.click(screen.getByText("Change player"));
+      const element = await findByText(/Active player: player2/i);
+      expect(element).toBeInTheDocument();
+    })
+  });
 
+  describe("Player won the game", () => {
+    beforeEach(() => {
+      playCard.mockImplementation(() => ({
+        players: {
+          active: {
+            displayedName: "player1",
+            health: 30,
+            manaSlot: 1,
+            activeMana: 0,
+            cardsInHand: [0, 2, 3],
+          },
+          inactive: {
+            displayedName: "player2",
+            health: 29,
+            manaSlot: 1,
+            activeMana: 1,
+            cardsInHand: [0, 1, 2, 3],
+          },
+        },
+        winner: {
+          displayedName: "player1",
+        },
+      }));
+    })
+    it("check does player win", async () => {
+      const { findByText } = render(<App />);
+      const button = await screen.findByTestId("test1");
+      userEvent.click(button);
+      const element = await findByText(/The winner is: player1/i);
+      expect(element).toBeInTheDocument();
+    });
+    it("displays restart game button", async () => {
+      const { findByText } = render(<App />);
+      const button = await screen.findByTestId("test1");
+      userEvent.click(button);
+      const restartButton = await findByText("Restart game");
+      expect(restartButton).toBeVisible();
+    });
+    it("restarting game", async () => {
+      startGame.mockImplementation(() => ({
+        players: {
+          active: {
+            displayedName: "player1",
+            health: 30,
+            manaSlot: 1,
+            activeMana: 0,
+            cardsInHand: [0, 2, 3],
+          },
+          inactive: {
+            displayedName: "player2",
+            health: 29,
+            manaSlot: 1,
+            activeMana: 1,
+            cardsInHand: [0, 1, 2, 3],
+          },
+        },
+        winner: {
+          displayedName: "player1",
+        },
+      }));
+      render(<App />);
+      const restartButton = await screen.findByText("Restart game");
+      userEvent.click(restartButton);
+      // const element = await findByText(/Active player: player1/i);
+      // expect(element).toBeInTheDocument();
+    });
+  })
+
+  // it("the inactive players health decreases by 1", async () => {
+  //   render(<App />);
+  //   const button = await screen.findByTestId("test1");
+  //   userEvent.click(button);
+  //   const element = await screen.findByText(/Inactive players health: 29/i);
+  //   expect(element).toBeInTheDocument();
+  // });
   // TODO
 
-  // winning/losing
-  // change player manually
+  // winning/losing DONE
+  // change player manually DONE
+  // Turn logic DONE
   // start new game with everything clearing
-  // testing routes 
+  // testing routes
 });
