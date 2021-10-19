@@ -6,14 +6,20 @@ export const startGame = async () => {
     return response;
 };
 
-export const playTurn = async () => {
-    const response = (await axios.get("http://localhost:3000/playturn")).data
-
-    return response;
-}
-
 export const playCard = async (cardIndex) => {
     const response = (await axios.get(`http://localhost:3000/playcard/${cardIndex}`)).data
 
     return response;
 }
+
+export const switchPlayer = async () => {
+    const response = (await axios.get("http://localhost:3000/changeplayer")).data
+
+    return response;
+}
+
+export const restartGame = async () => {
+    const response = (await axios.get("http://localhost:3000/restartgame")).data
+    
+    return response;
+};
