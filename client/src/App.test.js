@@ -12,9 +12,9 @@ describe("Trading card game", () => {
         active: {
           displayedName: "player1",
           health: 30,
-          manaSlot: 0,
-          activeMana: 0,
-          cardsInHand: [1, 2, 3],
+          manaSlot: 1,
+          activeMana: 1,
+          cardsInHand: [0, 1, 2, 3],
         },
       },
     }));
@@ -27,21 +27,21 @@ describe("Trading card game", () => {
       expect(element).toBeInTheDocument();
     });
 
-    it("it displays active player health", async () => {
+    it("it displays active player health as 30", async () => {
       const { findByText } = render(<App />);
       const element = await findByText(/Health: 30/i);
       expect(element).toBeInTheDocument();
     });
 
-    it("it displays active player manaSlot", async () => {
+    it("it displays active player manaSlot as 1", async () => {
       const { findByText } = render(<App />);
-      const element = await findByText(/Mana slot: 0/i);
+      const element = await findByText(/Mana slot: 1/i);
       expect(element).toBeInTheDocument();
     });
 
-    it("it displays active player activeMana", async () => {
+    it("it displays active player activeMana as 1", async () => {
       const { findByText } = render(<App />);
-      const element = await findByText(/Active mana: 0/i);
+      const element = await findByText(/Active mana: 1/i);
       expect(element).toBeInTheDocument();
     });
 
@@ -50,32 +50,6 @@ describe("Trading card game", () => {
     //   const element = await findByText(/Cards in hand: 1 2 3/i);
     //   expect(element).toBeInTheDocument();
     // });
-  });
-
-  describe("First player plays first turn", () => {
-    beforeEach(() => {
-      startGame.mockImplementation(() => ({
-        players: {
-          active: {
-            displayedName: "player1",
-            health: 30,
-            manaSlot: 1,
-            activeMana: 1,
-            cardsInHand: [0, 1, 2, 3],
-          },
-        },
-      }));
-    });
-    it("the active players mana slot increases by 1", async () => {
-      const { findByText } = render(<App />);
-      const element = await findByText(/Mana slot: 1/i);
-      expect(element).toBeInTheDocument();
-    });
-    it("the active players active mana increases by 1", async () => {
-      const { findByText } = render(<App />);
-      const element = await findByText(/Active mana: 1/i);
-      expect(element).toBeInTheDocument();
-    });
   });
 
   describe("playing a 1 cost card", () => {
@@ -99,21 +73,22 @@ describe("Trading card game", () => {
         },
       }));
     });
+
     it("the active players active mana decreases by 1", async () => {
       render(<App />);
-      const button = await screen.findByTestId("test1");
-      userEvent.click(button);
+      userEvent.click(await screen.findByTestId("test1"));
       const element = await screen.findByText(/Active mana: 0/i);
       expect(element).toBeInTheDocument();
     });
+
     it("the inactive players health decreases by 1", async () => {
       render(<App />);
-      const button = await screen.findByTestId("test1");
-      userEvent.click(button);
+      userEvent.click(await screen.findByTestId("test1"));
       const element = await screen.findByText(/Inactive players health: 29/i);
       expect(element).toBeInTheDocument();
     });
   });
+
   describe("switch player button functionality", () => {
     beforeEach(() => {
       switchPlayer.mockImplementation(() => ({
@@ -135,11 +110,13 @@ describe("Trading card game", () => {
         },
       }));
     });
+
     it("displays switch active player as button", async () => {
       const { findByText } = render(<App />);
       const button = await findByText("Change player");
       expect(button).toBeVisible();
     });
+
     it("change active player", async () => {
       const { findByText } = render(<App />);
       userEvent.click(screen.getByText("Change player"));
@@ -171,6 +148,7 @@ describe("Trading card game", () => {
           displayedName: "player1",
         },
       }));
+
       restartGame.mockImplementation(() => ({
         players: {
           active: {
@@ -183,6 +161,7 @@ describe("Trading card game", () => {
         },
       }));
     })
+
     it("check does player win", async () => {
       const { findByText } = render(<App />);
       const button = await screen.findByTestId("test1");
@@ -190,6 +169,7 @@ describe("Trading card game", () => {
       const element = await findByText(/The winner is: player1/i);
       expect(element).toBeInTheDocument();
     });
+
     it("displays restart game button", async () => {
       const { findByText } = render(<App />);
       const button = await screen.findByTestId("test1");
@@ -197,6 +177,7 @@ describe("Trading card game", () => {
       const restartButton = await findByText("Restart game");
       expect(restartButton).toBeVisible();
     });
+
     it("restarting game", async () => {
       startGame.mockImplementation(() => ({
         players: {
@@ -226,19 +207,4 @@ describe("Trading card game", () => {
       expect(element).toBeInTheDocument();
     });
   })
-
-  // it("the inactive players health decreases by 1", async () => {
-  //   render(<App />);
-  //   const button = await screen.findByTestId("test1");
-  //   userEvent.click(button);
-  //   const element = await screen.findByText(/Inactive players health: 29/i);
-  //   expect(element).toBeInTheDocument();
-  // });
-  // TODO
-
-  // winning/losing DONE
-  // change player manually DONE
-  // Turn logic DONE
-  // start new game with everything clearing DONE
-  // testing routes
 });
