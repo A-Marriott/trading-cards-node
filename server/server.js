@@ -10,7 +10,7 @@ game.turnStart();
 app.use(cors());
 
 app.get("/", (req, res) => {
-  res.status(200).json(game);
+  res.json(game);
 });
 
 app.get("/playcard/:cardindex", (req, res) => {
@@ -32,3 +32,5 @@ app.get("/restartgame", (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
+
+module.exports = app;
