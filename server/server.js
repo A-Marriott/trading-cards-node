@@ -10,7 +10,7 @@ game.turnStart();
 app.use(cors());
 
 app.get("/", (req, res) => {
-  res.json(game);
+  res.status(200).json(game);
 });
 
 app.get("/playcard/:cardindex", (req, res) => {
