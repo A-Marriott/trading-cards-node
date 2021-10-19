@@ -4,6 +4,7 @@ import { startGame, playCard, switchPlayer, restartGame } from "./Game";
 
 function App() {
   const [game, setGame] = useState({});
+  const [impossibleMove, setImpossibleMove] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -15,18 +16,26 @@ function App() {
 
   const handlePlayCard = async (cardIndex) => {
     const fetchedGame = await playCard(cardIndex);
-    // console.log(fetchedGame)
-    setGame(fetchedGame);
+
+    if (fetchedGame.message) {
+      setImpossibleMove(true)
+      setTimeout(() => setImpossibleMove(false), 1500)
+    } else {
+      setGame(fetchedGame)
+      setImpossibleMove(false)
+    }
   };
 
   const handleChangePlayer = async () => {
     const fetchedGame = await switchPlayer();
     setGame(fetchedGame);
+    setImpossibleMove(false)
   };
 
   const handleRestartGame = async () => {
     const fetchedGame = await restartGame();
     setGame(fetchedGame);
+    setImpossibleMove(false)
   }
 
   if (game.winner) {
@@ -61,6 +70,9 @@ function App() {
                 </button>
               );
             })}
+            {impossibleMove &&
+              <p>Impossible move!</p>
+            }
           </>
         )}
         <button onClick={() => handleChangePlayer()}>Change player</button>
