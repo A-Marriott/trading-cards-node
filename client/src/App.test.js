@@ -239,6 +239,6 @@ describe("Trading card game", () => {
   // winning/losing DONE
   // change player manually DONE
   // Turn logic DONE
-  // start new game with everything clearing
+  // start new game with everything clearing DONE
   // testing routes
 });
