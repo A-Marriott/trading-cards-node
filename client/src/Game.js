@@ -7,9 +7,20 @@ export const startGame = async () => {
 };
 
 export const playCard = async (cardIndex) => {
-    const response = (await axios.get(`http://localhost:3000/playcard/${cardIndex}`)).data
-
-    return response;
+    // const response = (await axios.get(`http://localhost:3000/playcard/${cardIndex}`))
+    const response = await axios.get(`http://localhost:3000/playcard/${cardIndex}`)
+        .then(function (response) {
+            // handle success
+            return response.data;
+        })
+        .catch(function (error) {
+            // handle error
+            console.log(error);
+        })
+        // .catch(function (error) {
+        //     console.log(error.toJSON());
+        // });
+    // console.log('response.data')
 };
 
 export const switchPlayer = async () => {

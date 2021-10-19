@@ -15,6 +15,7 @@ function App() {
 
   const handlePlayCard = async (cardIndex) => {
     const fetchedGame = await playCard(cardIndex);
+    // console.log(fetchedGame)
     setGame(fetchedGame);
   };
 
